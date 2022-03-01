@@ -24,7 +24,9 @@ function App() {
   }, []);
 
   const onSuccess = function (stream) {
-    let mediaRecorder = new MediaRecorder(stream, { mimeType: options.type });
+    let mediaRecorder = new MediaRecorder(stream, {
+      mimeType: `${options.type};${options.codecs}`,
+    });
 
     const supportedAudios = getSupportedMimeTypes(options.tag);
     console.log("-- All supported Audios : ", supportedAudios);
@@ -33,11 +35,10 @@ function App() {
       console.log("data available after MediaRecorder.stop() called.");
 
       const blob = new Blob(chunks, {
-        type: "audio/wav",
+        type: "audio/wav; codecs:AAC",
       });
       chunks = [];
 
-      console.log(mediaRecorder.mimeType);
       console.log("blob mimeType: ", blob.type);
       console.log("blob: -> ", blob);
 
@@ -77,16 +78,14 @@ function App() {
   const onRecordButtonClick = () => {
     if (mediaRecord.state === "inactive") {
       mediaRecord.start();
-      console.info("recorder started");
-      console.log("media recorder state: ", mediaRecord.state);
+      console.warn("recorder started");
     }
   };
 
   const onStopButtonClick = () => {
     if (mediaRecord.state === "recording") {
       mediaRecord.stop();
-      console.info("recorder stopped");
-      console.log("media recorder state: ", mediaRecord.state);
+      console.warn("recorder stopped");
       console.log("mediaRecorder mimeType: ", mediaRecord.mimeType);
     } else {
       console.warn("You should hit Record before stopping.");
