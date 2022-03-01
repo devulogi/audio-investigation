@@ -51,3 +51,15 @@ export function blobToArrayBuffer(blob) {
     };
   });
 }
+
+export function downloadFile(recorderChunks) {
+  var blob = new Blob(recorderChunks, { type: "audio/webm;codecs=opus" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  document.body.appendChild(a);
+  a.style = "display: none";
+  a.href = url;
+  a.download = "test.webm";
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
