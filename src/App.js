@@ -24,28 +24,30 @@ function App() {
   }, []);
 
   const onSuccess = function (stream) {
-    let mediaRecorder = new MediaRecorder(stream, {
-      mimeType: `${options.type};${options.codecs}`,
-    });
+    let mediaRecorder = new MediaRecorder(stream, { mimeType: options.type });
 
     const supportedAudios = getSupportedMimeTypes(options.tag);
     console.log("-- All supported Audios : ", supportedAudios);
 
     mediaRecorder.onstop = function () {
+      console.log("data available after MediaRecorder.stop() called.");
+
       const blob = new Blob(chunks, {
-        type: "audio/wav; codecs:AAC",
+        type: `${options.type};${options.codecs}`,
       });
       chunks = [];
 
+      console.log(mediaRecorder.mimeType);
       console.log("blob mimeType: ", blob.type);
-      console.log("blob: -> ", blob);
 
       blobToArrayBuffer(blob).then(response => {
         console.log("response: ", response);
       });
 
       const url = window.URL.createObjectURL(blob);
+
       setSource(url);
+
       if (ref.current) {
         ref.current.onloadedmetadata = function () {
           console.log("Metadata loaded complete.");
@@ -66,6 +68,7 @@ function App() {
     mediaRecorder.ondataavailable = function (e) {
       chunks.push(e.data);
     };
+
     setMediaRecord(mediaRecorder);
   };
 
@@ -76,14 +79,16 @@ function App() {
   const onRecordButtonClick = () => {
     if (mediaRecord.state === "inactive") {
       mediaRecord.start();
-      console.warn("recorder started");
+      console.info("recorder started");
+      console.log("media recorder state: ", mediaRecord.state);
     }
   };
 
   const onStopButtonClick = () => {
     if (mediaRecord.state === "recording") {
       mediaRecord.stop();
-      console.warn("recorder stopped");
+      console.info("recorder stopped");
+      console.log("media recorder state: ", mediaRecord.state);
       console.log("mediaRecorder mimeType: ", mediaRecord.mimeType);
     } else {
       console.warn("You should hit Record before stopping.");
@@ -92,14 +97,15 @@ function App() {
 
   return (
     <div>
-      updated
       <div className='buttons'>
         <button onClick={onRecordButtonClick}>Record</button>
         <button onClick={onStopButtonClick}>Stop</button>
         {source && <button onClick={() => setSource(null)}>Delete</button>}
       </div>
       <div className='audio'>
-        {source && <audio ref={ref} src={source} controls></audio>}
+        {source && (
+          <audio ref={ref} src={source} controls autoPlay loop></audio>
+        )}
         <br />
         {source && (
           <a href={source} download='audio.wav'>
