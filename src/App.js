@@ -33,12 +33,13 @@ function App() {
       console.log("data available after MediaRecorder.stop() called.");
 
       const blob = new Blob(chunks, {
-        type: `${options.type};${options.codecs}`,
+        type: "audio/wav",
       });
       chunks = [];
 
       console.log(mediaRecorder.mimeType);
       console.log("blob mimeType: ", blob.type);
+      console.log("blob: -> ", blob);
 
       blobToArrayBuffer(blob).then(response => {
         console.log("response: ", response);
