@@ -32,8 +32,6 @@ function App() {
     console.log("-- All supported Audios : ", supportedAudios);
 
     mediaRecorder.onstop = function () {
-      console.log("data available after MediaRecorder.stop() called.");
-
       const blob = new Blob(chunks, {
         type: "audio/wav; codecs:AAC",
       });
@@ -94,6 +92,7 @@ function App() {
 
   return (
     <div>
+      updated
       <div className='buttons'>
         <button onClick={onRecordButtonClick}>Record</button>
         <button onClick={onStopButtonClick}>Stop</button>
